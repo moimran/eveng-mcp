@@ -1,0 +1,96 @@
+# Testing dependencies for EVE-NG MCP Server
+
+# Core testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-html>=3.2.0
+pytest-xdist>=3.3.0
+pytest-mock>=3.11.0
+pytest-timeout>=2.1.0
+
+# Performance testing
+pytest-benchmark>=4.0.0
+pytest-profiling>=1.7.0
+
+# HTTP testing
+httpx>=0.24.0
+responses>=0.23.0
+aioresponses>=0.7.4
+
+# Mocking and fixtures
+factory-boy>=3.3.0
+faker>=19.0.0
+freezegun>=1.2.0
+
+# Load testing
+locust>=2.16.0
+aiohttp>=3.8.0
+
+# Test utilities
+parameterized>=0.9.0
+testfixtures>=7.2.0
+dirty-equals>=0.6.0
+
+# Coverage and reporting
+coverage>=7.3.0
+coverage-badge>=1.1.0
+
+# Code quality
+flake8>=6.0.0
+black>=23.0.0
+isort>=5.12.0
+mypy>=1.5.0
+
+# Documentation testing
+doctest>=1.0.0
+
+# Database testing (if needed)
+pytest-postgresql>=5.0.0
+pytest-redis>=3.0.0
+
+# Environment management
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# Async testing utilities
+asynctest>=0.13.0
+pytest-asyncio-cooperative>=0.21.0
+
+# Network testing
+pytest-socket>=0.6.0
+pytest-httpserver>=1.0.8
+
+# Time-based testing
+pytest-freezegun>=0.4.2
+time-machine>=2.12.0
+
+# Logging testing
+pytest-logging>=2016.11.4
+
+# Parallel testing
+pytest-parallel>=0.1.1
+
+# Test data generation
+hypothesis>=6.82.0
+mimesis>=11.1.0
+
+# API testing
+tavern>=2.3.0
+schemathesis>=3.19.0
+
+# Security testing
+bandit>=1.7.5
+safety>=2.3.0
+
+# Performance profiling
+py-spy>=0.3.14
+memory-profiler>=0.61.0
+
+# Test reporting
+allure-pytest>=2.13.0
+pytest-json-report>=1.5.0
+
+# Development utilities
+ipdb>=0.13.13
+pdbpp>=0.10.3

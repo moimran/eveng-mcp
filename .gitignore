@@ -1,10 +1,110 @@
-# Python-generated files
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+*.py[cod]
+*$py.class
 
-# Virtual environments
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Test results and reports
+test-results*.xml
+test-report*.html
+test-report*.json
+benchmark*.json
+*test_results.json
+coverage.json
+
+# Environments
+.env
+.env.local
+.env.production
+.env.staging
 .venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# EVE-NG MCP Server specific
+data/
+temp/
+*.pid
+*.sock
+
+# Configuration files with secrets
+config/local.json
+config/development.json
+config/secrets.json
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Docker
+.dockerignore
+
+# Monitoring and metrics
+prometheus/
+grafana/
+jaeger/
+
+# Backup files
+*.backup
+*.old

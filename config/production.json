@@ -1,0 +1,100 @@
+{
+  "eveng": {
+    "host": "eve-ng.company.com",
+    "port": 443,
+    "protocol": "https",
+    "username": "${EVENG_USERNAME}",
+    "password": "${EVENG_PASSWORD}",
+    "ssl_verify": true,
+    "timeout": 60,
+    "max_retries": 5,
+    "connection_pool_size": 20,
+    "keep_alive": true
+  },
+  "mcp": {
+    "name": "EVE-NG MCP Server",
+    "version": "1.0.0",
+    "transport": "sse",
+    "host": "0.0.0.0",
+    "port": 8000,
+    "log_level": "INFO",
+    "log_format": "json",
+    "max_connections": 100,
+    "request_timeout": 30,
+    "keepalive_timeout": 65
+  },
+  "security": {
+    "disable_ssl_warnings": false,
+    "max_concurrent_connections": 100,
+    "session_timeout": 3600,
+    "rate_limit": {
+      "enabled": true,
+      "requests_per_minute": 60,
+      "burst_size": 10
+    },
+    "cors": {
+      "enabled": true,
+      "allowed_origins": ["https://mcp-inspector.company.com"],
+      "allowed_methods": ["GET", "POST", "OPTIONS"],
+      "allowed_headers": ["Content-Type", "Authorization"]
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "json",
+    "file": "/var/log/eveng-mcp-server/server.log",
+    "max_size": "100MB",
+    "backup_count": 5,
+    "rotation": "daily",
+    "structured": true,
+    "include_request_id": true
+  },
+  "monitoring": {
+    "health_check": {
+      "enabled": true,
+      "endpoint": "/health",
+      "interval": 30
+    },
+    "metrics": {
+      "enabled": true,
+      "endpoint": "/metrics",
+      "prometheus": true
+    },
+    "tracing": {
+      "enabled": false,
+      "jaeger_endpoint": "http://jaeger:14268/api/traces"
+    }
+  },
+  "performance": {
+    "connection_pool": {
+      "max_size": 20,
+      "min_size": 5,
+      "max_idle_time": 300
+    },
+    "caching": {
+      "enabled": true,
+      "ttl": 300,
+      "max_size": 1000
+    },
+    "compression": {
+      "enabled": true,
+      "level": 6
+    }
+  },
+  "features": {
+    "lab_auto_cleanup": {
+      "enabled": true,
+      "max_age_hours": 24,
+      "prefix_filter": "temp_"
+    },
+    "node_auto_shutdown": {
+      "enabled": true,
+      "idle_timeout_minutes": 60
+    },
+    "backup": {
+      "enabled": true,
+      "interval_hours": 6,
+      "retention_days": 7
+    }
+  }
+}

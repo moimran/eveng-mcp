@@ -1,0 +1,77 @@
+[Unit]
+Description=EVE-NG MCP Server
+Documentation=https://github.com/your-org/eveng-mcp-server
+After=network.target network-online.target
+Wants=network-online.target
+Requires=network.target
+
+[Service]
+Type=exec
+User=eveng-mcp
+Group=eveng-mcp
+WorkingDirectory=/opt/eveng-mcp-server
+Environment=PATH=/opt/eveng-mcp-server/.venv/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONPATH=/opt/eveng-mcp-server
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+
+# Load environment variables from file
+EnvironmentFile=-/etc/eveng-mcp-server/environment
+EnvironmentFile=-/opt/eveng-mcp-server/.env
+
+# Main command
+ExecStart=/opt/eveng-mcp-server/.venv/bin/python -m eveng_mcp_server.cli run \
+    --transport sse \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --config /etc/eveng-mcp-server/production.json
+
+# Pre-start checks
+ExecStartPre=/bin/bash -c 'test -f /opt/eveng-mcp-server/.venv/bin/python'
+ExecStartPre=/bin/bash -c 'test -f /etc/eveng-mcp-server/production.json'
+
+# Reload configuration
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+
+# Restart policy
+Restart=always
+RestartSec=10
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RemoveIPC=true
+
+# Writable directories
+ReadWritePaths=/opt/eveng-mcp-server/logs
+ReadWritePaths=/opt/eveng-mcp-server/data
+ReadWritePaths=/var/log/eveng-mcp-server
+
+# Network access
+PrivateNetwork=false
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=eveng-mcp-server
+
+# Watchdog
+WatchdogSec=30
+
+[Install]
+WantedBy=multi-user.target
