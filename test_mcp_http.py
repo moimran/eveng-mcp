@@ -13,7 +13,7 @@ async def test_mcp_lab_creation():
     print("🧪 Testing MCP Server via HTTP")
     print("=" * 40)
     
-    base_url = "http://localhost:8001"
+    base_url = "http://localhost:8000"
     
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
