@@ -1,0 +1,403 @@
+{
+  "name": "enterprise-network",
+  "description": "Enterprise network topology for testing routing protocols and security",
+  "author": "Network Engineer",
+  "version": "1.0",
+  "metadata": {
+    "created": "2024-01-15",
+    "purpose": "OSPF and BGP testing",
+    "complexity": "intermediate",
+    "estimated_time": "2 hours"
+  },
+  "nodes": {
+    "core-router-1": {
+      "template": "vios",
+      "left": 100,
+      "top": 100,
+      "ram": 1024,
+      "ethernet": 8,
+      "console": "telnet",
+      "delay": 0,
+      "description": "Core router for OSPF area 0",
+      "config": {
+        "hostname": "CORE-R1",
+        "interfaces": {
+          "GigabitEthernet0/0": {
+            "ip": "10.1.1.1",
+            "mask": "255.255.255.252",
+            "description": "Link to CORE-R2"
+          },
+          "GigabitEthernet0/1": {
+            "ip": "10.1.2.1",
+            "mask": "255.255.255.252",
+            "description": "Link to EDGE-R1"
+          },
+          "Loopback0": {
+            "ip": "1.1.1.1",
+            "mask": "255.255.255.255",
+            "description": "Router ID"
+          }
+        },
+        "ospf": {
+          "process_id": 1,
+          "router_id": "1.1.1.1",
+          "networks": [
+            "10.1.1.0 0.0.0.3 area 0",
+            "10.1.2.0 0.0.0.3 area 0",
+            "1.1.1.1 0.0.0.0 area 0"
+          ]
+        }
+      }
+    },
+    "core-router-2": {
+      "template": "vios",
+      "left": 300,
+      "top": 100,
+      "ram": 1024,
+      "ethernet": 8,
+      "console": "telnet",
+      "delay": 0,
+      "description": "Core router for OSPF area 0",
+      "config": {
+        "hostname": "CORE-R2",
+        "interfaces": {
+          "GigabitEthernet0/0": {
+            "ip": "10.1.1.2",
+            "mask": "255.255.255.252",
+            "description": "Link to CORE-R1"
+          },
+          "GigabitEthernet0/1": {
+            "ip": "10.1.3.1",
+            "mask": "255.255.255.252",
+            "description": "Link to EDGE-R2"
+          },
+          "Loopback0": {
+            "ip": "2.2.2.2",
+            "mask": "255.255.255.255",
+            "description": "Router ID"
+          }
+        },
+        "ospf": {
+          "process_id": 1,
+          "router_id": "2.2.2.2",
+          "networks": [
+            "10.1.1.0 0.0.0.3 area 0",
+            "10.1.3.0 0.0.0.3 area 0",
+            "2.2.2.2 0.0.0.0 area 0"
+          ]
+        }
+      }
+    },
+    "edge-router-1": {
+      "template": "vios",
+      "left": 50,
+      "top": 250,
+      "ram": 512,
+      "ethernet": 4,
+      "console": "telnet",
+      "delay": 0,
+      "description": "Edge router for branch office",
+      "config": {
+        "hostname": "EDGE-R1",
+        "interfaces": {
+          "GigabitEthernet0/0": {
+            "ip": "10.1.2.2",
+            "mask": "255.255.255.252",
+            "description": "Link to CORE-R1"
+          },
+          "GigabitEthernet0/1": {
+            "ip": "192.168.10.1",
+            "mask": "255.255.255.0",
+            "description": "LAN interface"
+          },
+          "Loopback0": {
+            "ip": "3.3.3.3",
+            "mask": "255.255.255.255",
+            "description": "Router ID"
+          }
+        },
+        "ospf": {
+          "process_id": 1,
+          "router_id": "3.3.3.3",
+          "networks": [
+            "10.1.2.0 0.0.0.3 area 1",
+            "192.168.10.0 0.0.0.255 area 1",
+            "3.3.3.3 0.0.0.0 area 1"
+          ]
+        }
+      }
+    },
+    "edge-router-2": {
+      "template": "vios",
+      "left": 350,
+      "top": 250,
+      "ram": 512,
+      "ethernet": 4,
+      "console": "telnet",
+      "delay": 0,
+      "description": "Edge router for branch office",
+      "config": {
+        "hostname": "EDGE-R2",
+        "interfaces": {
+          "GigabitEthernet0/0": {
+            "ip": "10.1.3.2",
+            "mask": "255.255.255.252",
+            "description": "Link to CORE-R2"
+          },
+          "GigabitEthernet0/1": {
+            "ip": "192.168.20.1",
+            "mask": "255.255.255.0",
+            "description": "LAN interface"
+          },
+          "Loopback0": {
+            "ip": "4.4.4.4",
+            "mask": "255.255.255.255",
+            "description": "Router ID"
+          }
+        },
+        "ospf": {
+          "process_id": 1,
+          "router_id": "4.4.4.4",
+          "networks": [
+            "10.1.3.0 0.0.0.3 area 2",
+            "192.168.20.0 0.0.0.255 area 2",
+            "4.4.4.4 0.0.0.0 area 2"
+          ]
+        }
+      }
+    },
+    "switch-1": {
+      "template": "viosl2",
+      "left": 50,
+      "top": 350,
+      "ram": 256,
+      "ethernet": 16,
+      "console": "telnet",
+      "delay": 0,
+      "description": "Access switch for branch 1",
+      "config": {
+        "hostname": "SW1",
+        "vlans": {
+          "10": {
+            "name": "DATA",
+            "description": "Data VLAN"
+          },
+          "20": {
+            "name": "VOICE",
+            "description": "Voice VLAN"
+          },
+          "99": {
+            "name": "MGMT",
+            "description": "Management VLAN"
+          }
+        },
+        "interfaces": {
+          "GigabitEthernet0/1": {
+            "mode": "trunk",
+            "allowed_vlans": "10,20,99",
+            "description": "Trunk to EDGE-R1"
+          },
+          "FastEthernet0/1": {
+            "mode": "access",
+            "vlan": 10,
+            "description": "PC1"
+          },
+          "FastEthernet0/2": {
+            "mode": "access",
+            "vlan": 20,
+            "description": "IP Phone"
+          }
+        }
+      }
+    },
+    "switch-2": {
+      "template": "viosl2",
+      "left": 350,
+      "top": 350,
+      "ram": 256,
+      "ethernet": 16,
+      "console": "telnet",
+      "delay": 0,
+      "description": "Access switch for branch 2",
+      "config": {
+        "hostname": "SW2",
+        "vlans": {
+          "10": {
+            "name": "DATA",
+            "description": "Data VLAN"
+          },
+          "20": {
+            "name": "VOICE",
+            "description": "Voice VLAN"
+          },
+          "99": {
+            "name": "MGMT",
+            "description": "Management VLAN"
+          }
+        },
+        "interfaces": {
+          "GigabitEthernet0/1": {
+            "mode": "trunk",
+            "allowed_vlans": "10,20,99",
+            "description": "Trunk to EDGE-R2"
+          },
+          "FastEthernet0/1": {
+            "mode": "access",
+            "vlan": 10,
+            "description": "PC2"
+          },
+          "FastEthernet0/2": {
+            "mode": "access",
+            "vlan": 20,
+            "description": "IP Phone"
+          }
+        }
+      }
+    }
+  },
+  "networks": {
+    "core-link": {
+      "type": "bridge",
+      "left": 200,
+      "top": 75,
+      "description": "Core router interconnect"
+    },
+    "edge1-link": {
+      "type": "bridge",
+      "left": 75,
+      "top": 175,
+      "description": "Core to Edge 1 link"
+    },
+    "edge2-link": {
+      "type": "bridge",
+      "left": 325,
+      "top": 175,
+      "description": "Core to Edge 2 link"
+    },
+    "branch1-lan": {
+      "type": "bridge",
+      "left": 50,
+      "top": 300,
+      "description": "Branch 1 LAN"
+    },
+    "branch2-lan": {
+      "type": "bridge",
+      "left": 350,
+      "top": 300,
+      "description": "Branch 2 LAN"
+    }
+  },
+  "connections": [
+    {
+      "source": "core-router-1",
+      "source_port": 0,
+      "target": "core-link",
+      "description": "CORE-R1 to CORE-R2"
+    },
+    {
+      "source": "core-router-2",
+      "source_port": 0,
+      "target": "core-link",
+      "description": "CORE-R2 to CORE-R1"
+    },
+    {
+      "source": "core-router-1",
+      "source_port": 1,
+      "target": "edge1-link",
+      "description": "CORE-R1 to EDGE-R1"
+    },
+    {
+      "source": "edge-router-1",
+      "source_port": 0,
+      "target": "edge1-link",
+      "description": "EDGE-R1 to CORE-R1"
+    },
+    {
+      "source": "core-router-2",
+      "source_port": 1,
+      "target": "edge2-link",
+      "description": "CORE-R2 to EDGE-R2"
+    },
+    {
+      "source": "edge-router-2",
+      "source_port": 0,
+      "target": "edge2-link",
+      "description": "EDGE-R2 to CORE-R2"
+    },
+    {
+      "source": "edge-router-1",
+      "source_port": 1,
+      "target": "branch1-lan",
+      "description": "EDGE-R1 to Branch 1 LAN"
+    },
+    {
+      "source": "switch-1",
+      "source_port": 0,
+      "target": "branch1-lan",
+      "description": "SW1 to Branch 1 LAN"
+    },
+    {
+      "source": "edge-router-2",
+      "source_port": 1,
+      "target": "branch2-lan",
+      "description": "EDGE-R2 to Branch 2 LAN"
+    },
+    {
+      "source": "switch-2",
+      "source_port": 0,
+      "target": "branch2-lan",
+      "description": "SW2 to Branch 2 LAN"
+    }
+  ],
+  "testing": {
+    "scenarios": [
+      {
+        "name": "OSPF Convergence",
+        "description": "Test OSPF convergence after link failure",
+        "steps": [
+          "Verify OSPF neighbor relationships",
+          "Check routing tables",
+          "Simulate link failure",
+          "Verify convergence time",
+          "Restore link and verify"
+        ]
+      },
+      {
+        "name": "VLAN Connectivity",
+        "description": "Test inter-VLAN routing",
+        "steps": [
+          "Configure VLANs on switches",
+          "Configure sub-interfaces on routers",
+          "Test connectivity between VLANs",
+          "Verify VLAN isolation"
+        ]
+      }
+    ],
+    "validation": {
+      "ping_tests": [
+        {
+          "source": "1.1.1.1",
+          "target": "2.2.2.2",
+          "expected": "success"
+        },
+        {
+          "source": "192.168.10.1",
+          "target": "192.168.20.1",
+          "expected": "success"
+        }
+      ],
+      "routing_checks": [
+        {
+          "router": "core-router-1",
+          "command": "show ip route ospf",
+          "expected_routes": ["2.2.2.2/32", "3.3.3.3/32", "4.4.4.4/32"]
+        }
+      ]
+    }
+  },
+  "documentation": {
+    "topology_diagram": "enterprise-network.mmd",
+    "configuration_guide": "enterprise-network-config.md",
+    "troubleshooting_guide": "enterprise-network-troubleshooting.md"
+  }
+}

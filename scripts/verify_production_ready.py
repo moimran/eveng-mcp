@@ -87,7 +87,17 @@ class ProductionReadinessChecker:
         self.check_file_exists("docs/api/README.md", "API documentation exists")
         self.check_file_exists("docs/deployment/README.md", "Deployment guide exists")
         self.check_file_exists("docs/troubleshooting/README.md", "Troubleshooting guide exists")
+        self.check_file_exists("docs/integrations/README.md", "Integration guide exists")
+        self.check_file_exists("docs/integrations/claude-desktop.md", "Claude Desktop guide exists")
+        self.check_file_exists("docs/integrations/vscode.md", "VS Code guide exists")
         
+        # Integration examples
+        self.check_directory_exists("examples/integrations", "Integration examples directory exists")
+        self.check_file_exists("examples/integrations/claude-desktop-config.json", "Claude Desktop config example exists")
+        self.check_file_exists("examples/integrations/vscode-workspace.json", "VS Code workspace example exists")
+        self.check_file_exists("examples/integrations/deploy_lab.py", "Lab deployment script exists")
+        self.check_file_exists("examples/integrations/sample-lab.json", "Sample lab configuration exists")
+
         # Check README content
         readme_path = self.project_root / "README.md"
         if readme_path.exists():
@@ -95,6 +105,7 @@ class ProductionReadinessChecker:
             self.check("README has installation instructions", "installation" in content.lower())
             self.check("README has usage examples", "usage" in content.lower())
             self.check("README has API reference", "api" in content.lower())
+            self.check("README has integration information", "integration" in content.lower())
     
     def check_testing_framework(self):
         """Check testing framework completeness"""

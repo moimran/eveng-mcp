@@ -29,11 +29,59 @@ A comprehensive Model Context Protocol (MCP) server for EVE-NG network emulation
 - Topology visualization and management
 - Network configuration and monitoring
 
-### 📊 MCP Resources & Prompts (Planned)
+### 📊 MCP Resources & Prompts
 - Dynamic resources for real-time lab status
 - Static resources for documentation and examples
 - Guided prompts for common workflows
 - Educational content generation
+
+## 🔗 Client Integrations
+
+The EVE-NG MCP Server integrates seamlessly with popular MCP-compatible clients:
+
+### 🤖 Claude Desktop
+Use EVE-NG directly in conversations with Claude Desktop for natural language network management:
+
+```json
+{
+  "mcpServers": {
+    "eveng-mcp-server": {
+      "command": "uv",
+      "args": ["run", "eveng-mcp-server", "run", "--transport", "stdio"],
+      "env": {
+        "EVENG_HOST": "eve.local",
+        "EVENG_USERNAME": "admin",
+        "EVENG_PASSWORD": "eve"
+      }
+    }
+  }
+}
+```
+
+**[📖 Complete Claude Desktop Integration Guide →](docs/integrations/claude-desktop.md)**
+
+### 💻 VS Code
+Integrate with VS Code for enhanced network development workflows:
+
+- Lab deployment from configuration files
+- Automated testing and validation
+- Topology visualization and documentation
+- Custom tasks and debugging support
+
+**[💻 Complete VS Code Integration Guide →](docs/integrations/vscode.md)**
+
+### 🔍 MCP Inspector
+Test and debug the server using the MCP Inspector:
+
+```bash
+# Start server in SSE mode
+uv run eveng-mcp-server run --transport sse --host 0.0.0.0 --port 8000
+
+# Start MCP Inspector
+npx @modelcontextprotocol/inspector
+```
+
+**[🔗 All Integration Guides →](docs/integrations/README.md)**
 
 ## Installation
 
@@ -142,12 +190,57 @@ uv run eveng-mcp-server test-connection
 uv run eveng-mcp-server run
 ```
 
-## Development Status
+## 📚 Documentation
 
-- ✅ Basic MCP server framework
-- ✅ EVE-NG connection management
-- ✅ Lab management tools
-- ✅ Node management tools
-- ✅ Network management tools
-- 📋 MCP resources implementation (planned)
-- 📋 MCP prompts for guided workflows (planned)
+### Complete Guides
+- **[📖 API Reference](docs/api/README.md)** - Complete documentation for all 25 tools, 4 resources, and 6 prompts
+- **[🚀 Deployment Guide](docs/deployment/README.md)** - Production deployment with Docker, Kubernetes, and systemd
+- **[🔧 Troubleshooting Guide](docs/troubleshooting/README.md)** - Common issues and solutions
+- **[🧪 Testing Guide](tests/README.md)** - Comprehensive testing procedures
+
+### Integration Guides
+- **[🤖 Claude Desktop Integration](docs/integrations/claude-desktop.md)** - Natural language network management
+- **[💻 VS Code Integration](docs/integrations/vscode.md)** - Enhanced development workflows
+- **[🔗 All Integrations](docs/integrations/README.md)** - Complete integration documentation
+
+### Examples
+- **[📁 Configuration Examples](examples/integrations/)** - Ready-to-use configurations
+- **[🧪 Test Scripts](tests/)** - Comprehensive test suite with examples
+- **[📊 Sample Labs](examples/integrations/sample-lab.json)** - Example network topologies
+
+## 🎯 Development Status
+
+- ✅ **Production Ready** - Complete MCP server implementation
+- ✅ **EVE-NG Integration** - Full API coverage with 25 tools
+- ✅ **Client Integrations** - Claude Desktop and VS Code support
+- ✅ **Comprehensive Testing** - Unit, integration, and E2E tests
+- ✅ **Production Deployment** - Docker, Kubernetes, systemd ready
+- ✅ **Complete Documentation** - API reference, guides, and examples
+- ✅ **MCP Resources** - 4 dynamic and static resources
+- ✅ **MCP Prompts** - 6 guided workflow prompts
+
+## 🚀 Quick Start
+
+1. **Install**: `git clone <repo> && cd eveng-mcp-server && uv sync`
+2. **Configure**: Copy `.env.example` to `.env` and set your EVE-NG credentials
+3. **Test**: `uv run eveng-mcp-server test-connection`
+4. **Integrate**: Follow our [Claude Desktop](docs/integrations/claude-desktop.md) or [VS Code](docs/integrations/vscode.md) guides
+5. **Deploy**: Use our [production deployment guide](docs/deployment/README.md) for production use
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+- Code style and standards
+- Testing requirements
+- Documentation guidelines
+- Pull request process
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- **Issues**: [GitHub Issues](https://github.com/moimran/eveng-mcp-server/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/moimran/eveng-mcp-server/discussions)
+- **Documentation**: [Complete Documentation](docs/README.md)

@@ -1,0 +1,191 @@
+{
+  "folders": [
+    {
+      "name": "EVE-NG Network Labs",
+      "path": "./labs"
+    },
+    {
+      "name": "Configuration Templates",
+      "path": "./configs"
+    },
+    {
+      "name": "Automation Scripts",
+      "path": "./scripts"
+    }
+  ],
+  "settings": {
+    "eveng.mcp.server": {
+      "command": "uv",
+      "args": [
+        "run",
+        "eveng-mcp-server",
+        "run",
+        "--transport",
+        "stdio"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "EVENG_HOST": "eve.local",
+        "EVENG_USERNAME": "admin",
+        "EVENG_PASSWORD": "eve",
+        "EVENG_PORT": "80",
+        "EVENG_PROTOCOL": "http"
+      }
+    },
+    "eveng.mcp.autoStart": true,
+    "eveng.mcp.debug": false,
+    "files.associations": {
+      "*.eveng": "json",
+      "*.unl": "xml",
+      "*.lab": "yaml"
+    },
+    "json.schemas": [
+      {
+        "fileMatch": ["*.eveng"],
+        "url": "./schemas/eveng-lab-schema.json"
+      }
+    ],
+    "yaml.schemas": {
+      "./schemas/eveng-config-schema.yaml": "*.lab"
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true
+    },
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "git.ignoreLimitWarning": true,
+    "terminal.integrated.env.linux": {
+      "EVENG_HOST": "eve.local",
+      "EVENG_USERNAME": "admin"
+    }
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Start EVE-NG MCP Server",
+        "type": "shell",
+        "command": "uv",
+        "args": [
+          "run",
+          "eveng-mcp-server",
+          "run",
+          "--transport",
+          "sse",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8000"
+        ],
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "new"
+        },
+        "isBackground": true,
+        "runOptions": {
+          "runOn": "folderOpen"
+        }
+      },
+      {
+        "label": "Test EVE-NG Connection",
+        "type": "shell",
+        "command": "uv",
+        "args": [
+          "run",
+          "eveng-mcp-server",
+          "test-connection",
+          "--host",
+          "eve.local",
+          "--username",
+          "admin",
+          "--password",
+          "eve"
+        ],
+        "group": "test"
+      },
+      {
+        "label": "Deploy Lab Configuration",
+        "type": "shell",
+        "command": "python",
+        "args": ["scripts/deploy_lab.py", "${file}"],
+        "group": "build",
+        "dependsOn": "Start EVE-NG MCP Server"
+      },
+      {
+        "label": "Validate Lab Configuration",
+        "type": "shell",
+        "command": "python",
+        "args": ["scripts/validate_lab.py", "${file}"],
+        "group": "test"
+      },
+      {
+        "label": "Generate Topology Diagram",
+        "type": "shell",
+        "command": "python",
+        "args": [
+          "scripts/generate_diagram.py",
+          "--lab",
+          "${file}",
+          "--output",
+          "${fileDirname}/${fileBasenameNoExtension}.mmd"
+        ],
+        "group": "build"
+      }
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug EVE-NG MCP Server",
+        "type": "python",
+        "request": "launch",
+        "module": "eveng_mcp_server.cli",
+        "args": [
+          "run",
+          "--transport",
+          "stdio",
+          "--debug"
+        ],
+        "env": {
+          "EVENG_HOST": "eve.local",
+          "EVENG_USERNAME": "admin",
+          "EVENG_PASSWORD": "eve",
+          "LOG_LEVEL": "DEBUG"
+        },
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder}"
+      },
+      {
+        "name": "Test Lab Deployment",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/scripts/test_lab.py",
+        "args": ["${file}"],
+        "env": {
+          "EVENG_HOST": "eve.local",
+          "EVENG_USERNAME": "admin",
+          "EVENG_PASSWORD": "eve"
+        },
+        "console": "integratedTerminal"
+      }
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "redhat.vscode-yaml",
+      "ms-vscode.json",
+      "humao.rest-client",
+      "bierner.markdown-mermaid",
+      "ms-vscode.vscode-json",
+      "ms-python.black-formatter",
+      "ms-python.isort",
+      "ms-python.mypy-type-checker"
+    ]
+  }
+}

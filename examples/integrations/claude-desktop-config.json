@@ -1,0 +1,60 @@
+{
+  "mcpServers": {
+    "eveng-mcp-server": {
+      "command": "uv",
+      "args": [
+        "run",
+        "eveng-mcp-server",
+        "run",
+        "--transport",
+        "stdio"
+      ],
+      "cwd": "/path/to/eveng-mcp-server",
+      "env": {
+        "EVENG_HOST": "eve.local",
+        "EVENG_USERNAME": "admin",
+        "EVENG_PASSWORD": "eve",
+        "EVENG_PORT": "80",
+        "EVENG_PROTOCOL": "http",
+        "LOG_LEVEL": "INFO"
+      }
+    },
+    "eveng-production": {
+      "command": "eveng-mcp-server",
+      "args": [
+        "run",
+        "--transport",
+        "stdio",
+        "--config",
+        "/etc/eveng-mcp/production.json"
+      ],
+      "env": {
+        "EVENG_HOST": "eve-prod.company.com",
+        "EVENG_USERNAME": "${EVENG_USERNAME}",
+        "EVENG_PASSWORD": "${EVENG_PASSWORD}",
+        "EVENG_PROTOCOL": "https",
+        "EVENG_PORT": "443",
+        "EVENG_SSL_VERIFY": "true"
+      }
+    },
+    "eveng-development": {
+      "command": "uv",
+      "args": [
+        "run",
+        "eveng-mcp-server",
+        "run",
+        "--transport",
+        "stdio",
+        "--debug"
+      ],
+      "cwd": "/path/to/eveng-mcp-server",
+      "env": {
+        "EVENG_HOST": "eve-dev.local",
+        "EVENG_USERNAME": "admin",
+        "EVENG_PASSWORD": "eve",
+        "LOG_LEVEL": "DEBUG",
+        "EVENG_SSL_VERIFY": "false"
+      }
+    }
+  }
+}
