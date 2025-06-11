@@ -70,28 +70,29 @@ def run(
     config.mcp.port = port
     
     # Configure logging
-    configure_logging()
-    
-    console.print(f"🚀 Starting EVE-NG MCP Server", style="bold green")
-    console.print(f"Transport: {transport}")
-    if transport == "sse":
-        console.print(f"Server will be available at: http://{host}:{port}")
-    
+    configure_logging(transport)
+
+    # Only print startup messages when not in stdio mode (to avoid interfering with JSON-RPC)
+    if transport != "stdio":
+        console.print(f"🚀 Starting EVE-NG MCP Server", style="bold green")
+        console.print(f"Transport: {transport}")
+        if transport == "sse":
+            console.print(f"Server will be available at: http://{host}:{port}")
+
     # Create and run server
-    async def run_server():
-        server = create_server()
-        
-        if transport == "stdio":
-            await server.run_stdio()
-        else:
-            await server.run_sse(host, port)
-    
     try:
-        asyncio.run(run_server())
+        server = create_server()
+
+        if transport == "stdio":
+            server.run_stdio()
+        else:
+            server.run_sse(host, port)
     except KeyboardInterrupt:
-        console.print("\n👋 Server stopped", style="yellow")
+        if transport != "stdio":
+            console.print("\n👋 Server stopped", style="yellow")
     except Exception as e:
-        console.print(f"❌ Error: {e}", style="bold red")
+        if transport != "stdio":
+            console.print(f"❌ Error: {e}", style="bold red")
         sys.exit(1)
 
 

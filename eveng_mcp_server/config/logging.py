@@ -6,7 +6,7 @@ from typing import Any, Dict
 from .settings import get_config
 
 
-def configure_logging() -> None:
+def configure_logging(transport: str = "sse") -> None:
     """Configure structured logging for the application."""
     config = get_config()
     
@@ -47,11 +47,12 @@ def configure_logging() -> None:
             cache_logger_on_first_use=True,
         )
     
-    # Set log level
+    # Set log level - use stderr for stdio transport to avoid interfering with JSON-RPC
     import logging
+    log_stream = sys.stderr if transport == "stdio" else sys.stdout
     logging.basicConfig(
         format="%(message)s",
-        stream=sys.stdout,
+        stream=log_stream,
         level=getattr(logging, config.mcp.log_level)
     )
 

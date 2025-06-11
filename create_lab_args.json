@@ -1,0 +1,9 @@
+{
+  "arguments": {
+    "name": "mcp_test_lab",
+    "description": "Test lab created via MCP Inspector for validation",
+    "author": "MCP Testing",
+    "version": "1.0",
+    "path": "/"
+  }
+}

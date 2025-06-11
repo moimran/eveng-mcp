@@ -187,11 +187,98 @@ class EVENGClientWrapper(LoggerMixin):
     async def list_labs(self, path: str = "/") -> List[Dict[str, Any]]:
         """List available labs."""
         await self.ensure_connected()
-        
+
         try:
-            labs = await asyncio.to_thread(self.client.list_labs, path)
-            self.logger.debug(f"Listed {len(labs)} labs", path=path)
-            return labs
+            if path == "/":
+                # Get all folders and labs
+                folders_response = await asyncio.to_thread(self.api.list_folders)
+
+                # DEBUG: Log the raw response
+                self.logger.info(f"DEBUG: list_folders() response type: {type(folders_response)}")
+                self.logger.info(f"DEBUG: list_folders() response: {folders_response}")
+
+                labs = []
+
+                # Handle the correct API response format
+                if isinstance(folders_response, dict):
+                    data = folders_response.get('data', {})
+
+                    # Get labs from root folder
+                    root_labs = data.get('labs', [])
+                    if isinstance(root_labs, list):
+                        for lab_info in root_labs:
+                            if isinstance(lab_info, dict):
+                                lab_data = {
+                                    'name': lab_info.get('file', '').replace('.unl', ''),
+                                    'path': '/',
+                                    'full_path': lab_info.get('path', ''),
+                                    'file': lab_info.get('file', ''),
+                                    'mtime': lab_info.get('mtime', ''),
+                                    'umtime': lab_info.get('umtime', 0)
+                                }
+                                labs.append(lab_data)
+
+                    # Get labs from subfolders
+                    folders = data.get('folders', [])
+                    if isinstance(folders, list):
+                        for folder_info in folders:
+                            if isinstance(folder_info, dict):
+                                folder_path = folder_info.get('path', '')
+                                if folder_path and folder_path != '/':
+                                    # Get labs from this subfolder
+                                    try:
+                                        subfolder_response = await asyncio.to_thread(self.api.get_folder, folder_path)
+                                        subfolder_data = subfolder_response.get('data', {})
+                                        subfolder_labs = subfolder_data.get('labs', [])
+
+                                        if isinstance(subfolder_labs, list):
+                                            for lab_info in subfolder_labs:
+                                                if isinstance(lab_info, dict):
+                                                    lab_data = {
+                                                        'name': lab_info.get('file', '').replace('.unl', ''),
+                                                        'path': folder_path,
+                                                        'full_path': lab_info.get('path', ''),
+                                                        'file': lab_info.get('file', ''),
+                                                        'mtime': lab_info.get('mtime', ''),
+                                                        'umtime': lab_info.get('umtime', 0)
+                                                    }
+                                                    labs.append(lab_data)
+                                    except Exception as subfolder_error:
+                                        self.logger.warning(f"Failed to get labs from folder {folder_path}: {subfolder_error}")
+
+                self.logger.debug(f"Listed {len(labs)} labs", path=path)
+                return labs
+            else:
+                # Get specific folder
+                folder_response = await asyncio.to_thread(self.api.get_folder, path)
+
+                # DEBUG: Log the raw response
+                self.logger.info(f"DEBUG: get_folder({path}) response type: {type(folder_response)}")
+                self.logger.info(f"DEBUG: get_folder({path}) response: {folder_response}")
+
+                labs = []
+
+                # Extract labs from the folder data
+                if isinstance(folder_response, dict):
+                    folder_data = folder_response.get('data', {})
+                    folder_labs = folder_data.get('labs', [])
+
+                    if isinstance(folder_labs, list):
+                        for lab_info in folder_labs:
+                            if isinstance(lab_info, dict):
+                                lab_data = {
+                                    'name': lab_info.get('file', '').replace('.unl', ''),
+                                    'path': path,
+                                    'full_path': lab_info.get('path', ''),
+                                    'file': lab_info.get('file', ''),
+                                    'mtime': lab_info.get('mtime', ''),
+                                    'umtime': lab_info.get('umtime', 0)
+                                }
+                                labs.append(lab_data)
+
+                self.logger.debug(f"Listed {len(labs)} labs in {path}", path=path)
+                return labs
+
         except Exception as e:
             self.logger.error("Failed to list labs", **log_error(e, {"path": path}))
             raise EVENGAPIError(f"Failed to list labs: {str(e)}")
@@ -199,9 +286,9 @@ class EVENGClientWrapper(LoggerMixin):
     async def get_lab(self, lab_path: str) -> Dict[str, Any]:
         """Get lab details."""
         await self.ensure_connected()
-        
+
         try:
-            lab = await asyncio.to_thread(self.client.get_lab, lab_path)
+            lab = await asyncio.to_thread(self.api.get_lab, lab_path)
             self.logger.debug("Retrieved lab details", lab_path=lab_path)
             return lab
         except Exception as e:

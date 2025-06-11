@@ -246,3 +246,77 @@ def register_dynamic_resources(mcp: "FastMCP", eveng_client: "EVENGClientWrapper
         except Exception as e:
             logger.error(f"Failed to get template resource: {e}")
             return json.dumps({"error": str(e)}, indent=2)
+
+    @mcp.resource("eveng://nodes/{lab_name}/{node_name}/config")
+    async def get_node_config_resource(lab_name: str, node_name: str) -> str:
+        """Get individual node configuration."""
+        try:
+            if not eveng_client.is_connected:
+                await eveng_client.connect()
+
+            lab_path = f"/{lab_name}.unl" if not lab_name.endswith('.unl') else f"/{lab_name}"
+
+            # First get all nodes to find the node ID by name
+            nodes = await eveng_client.list_nodes(lab_path)
+
+            if not nodes.get('data'):
+                return json.dumps({"error": f"No nodes found in lab {lab_name}"}, indent=2)
+
+            # Find the node by name
+            target_node = None
+            node_id = None
+            for nid, node_data in nodes['data'].items():
+                if node_data.get('name') == node_name:
+                    target_node = node_data
+                    node_id = nid
+                    break
+
+            if not target_node:
+                return json.dumps({"error": f"Node {node_name} not found in lab {lab_name}"}, indent=2)
+
+            # Get node configuration
+            try:
+                config = await eveng_client.get_node_config(lab_path, int(node_id))
+                config_data = config.get('data', {})
+            except Exception as config_error:
+                logger.warning(f"Could not retrieve configuration for node {node_name}: {config_error}")
+                config_data = {"error": f"Configuration not available: {str(config_error)}"}
+
+            # Get detailed node information
+            node_details = await eveng_client.get_node_details(lab_path, int(node_id))
+            node_info = node_details.get('data', {})
+
+            resource_data = {
+                "node_name": node_name,
+                "node_id": node_id,
+                "lab_name": lab_name,
+                "lab_path": lab_path,
+                "node_info": {
+                    "template": node_info.get('template', 'unknown'),
+                    "image": node_info.get('image', 'unknown'),
+                    "status": node_info.get('status', 'unknown'),
+                    "cpu": node_info.get('cpu', 1),
+                    "ram": node_info.get('ram', 512),
+                    "ethernet": node_info.get('ethernet', 0),
+                    "serial": node_info.get('serial', 0),
+                    "console": node_info.get('console', 'unknown'),
+                    "delay": node_info.get('delay', 0),
+                    "icon": node_info.get('icon', 'unknown'),
+                    "type": node_info.get('type', 'unknown'),
+                    "left": node_info.get('left', 0),
+                    "top": node_info.get('top', 0)
+                },
+                "configuration": config_data,
+                "interfaces": node_info.get('interfaces', {}),
+                "metadata": {
+                    "retrieved_at": "2025-06-11T03:53:00Z",
+                    "config_available": "error" not in config_data,
+                    "node_running": node_info.get('status') == 2  # 2 = running
+                }
+            }
+
+            return json.dumps(resource_data, indent=2)
+
+        except Exception as e:
+            logger.error(f"Failed to get node config resource: {e}")
+            return json.dumps({"error": str(e)}, indent=2)
